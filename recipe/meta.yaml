@@ -1,6 +1,6 @@
 # See https://github.com/conda/conda-build/issues/2666 for the missing tag
 {% set version = environ.get('GIT_DESCRIBE_TAG', 'untagged')|string|replace('-','_') %}
-{% set build_number = environ.get('GIT_DESCRIBE_NUMBER') %}
+{% set build_number = environ.get('GIT_DESCRIBE_NUMBER', '0') %}
 {% set build_string = "master_" + ((build_flavour + "_") if build_flavour else "") + build_number %}
 
 package:
