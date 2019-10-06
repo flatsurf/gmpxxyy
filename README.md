@@ -2,8 +2,6 @@
 [![macOS](https://dev.azure.com/flatsurf/conda/_apis/build/status/flatsurf.gmpxxyy?branchName=master&jobName=osx&configuration=osx%20osx_build_flavour)](https://dev.azure.com/flatsurf/conda/_build/latest?definitionId=&branchName=master)
 ![Windows disabled](https://img.shields.io/badge/Windows-disabled-lightgrey.svg)
 ![ppc64le disabled](https://img.shields.io/badge/ppc64le-disabled-lightgrey.svg)
-[![codecov](https://codecov.io/gh/flatsurf/gmpxxyy/branch/master/graph/badge.svg)](https://codecov.io/gh/flatsurf/gmpxxyy)
-[![asv](http://img.shields.io/badge/benchmarked%20by-asv-blue.svg?style=flat)](https://flatsurf.github.io/gmpxxyy-asv/)
 
 # Python Wrapper for GMP
 
