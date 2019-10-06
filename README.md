@@ -15,7 +15,7 @@ There might be others out there but we are aware of these Python wrappers for GM
 
 * [gmpy](https://pypi.org/project/gmpy/) and [gmpy2](https://github.com/aleaxit/gmpy)
 
-This wrapper was born out of the necessity for a wrapper for the C++ interface of GMP for [pyexactreal](https://github.com/flatsurf/exact-real) so the semantics are exactly the same as in the [C++ interface](https://gmplib.org/manual/C_002b_002b-Class-Interface.html#C_002b_002b-Class-Interface) and the Python code involved is quite minimal. It does not actually aim to compete with any of the existing wrappers, we just needed one that went through cppyy and broke it out of pyexactreal eventually. We have not done much benchmarking yet, however, there is certainly a lot of room for improvement[^benchmark].
+This wrapper was born out of the necessity for a wrapper for the C++ interface of GMP for [pyexactreal](https://github.com/flatsurf/exact-real) so the semantics are exactly the same as in the [C++ interface](https://gmplib.org/manual/C_002b_002b-Class-Interface.html#C_002b_002b-Class-Interface) and the Python code involved is quite minimal. It does not actually aim to compete with any of the existing wrappers, we just needed one that went through cppyy and broke it out of pyexactreal eventually. We have not done much benchmarking yet, however, there is certainly a lot of room for improvement<sup>1</sup>.
 
 ```
 >>> import gmpxxyy, gmpy2
@@ -54,7 +54,7 @@ conda activate gmpxxyy
 
 ## Run with binder in the Cloud
 
-You can try out this project in a very limited environment online by clicking the following links:
+You can try out this project in a very limited environment online by clicking this link:
 
 * **gmpxxyy** [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/flatsurf/exact-real/master?filepath=binder%2FSample.gmpxxyy.ipynb)
 
@@ -77,4 +77,6 @@ make install # to install into /usr/local
 
 * [@saraedum](https://github.com/saraedum)
 
-[^benchmark]: These benchmarks are not tuned in any way. I just typed them into a Python REPL on my Laptop with conda's IPython. This is not meant to be exact in any way, just to give you a very rough sense of what to expect. If I should really be benchmarking something else instead, please let me know :)
+---
+
+<sup>1</sup> These benchmarks are not tuned in any way. I just typed them into a Python REPL on my Laptop with conda's IPython. This is not meant to be exact in any way, just to give you a very rough sense of what to expect. If I should really be benchmarking something else instead, please let me know :)
