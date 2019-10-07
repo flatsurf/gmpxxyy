@@ -91,10 +91,14 @@ def enable_arithmetic(proxy, name):
 
     """
     if is_primitive_gmp_type(name):
-        proxy.__add__ = cppyy.gbl.gmpxxyy.add[proxy]
-        proxy.__sub__ = cppyy.gbl.gmpxxyy.sub[proxy]
-        proxy.__mul__ = cppyy.gbl.gmpxxyy.mul[proxy]
-        proxy.__truediv__ = cppyy.gbl.gmpxxyy.div[proxy]
+        proxy.__add__ = lambda lhs, rhs: cppyy.gbl.gmpxxyy.add[proxy, type(rhs)](lhs, rhs)
+        proxy.__radd__ = lambda rhs, lhs: cppyy.gbl.gmpxxyy.radd[type(rhs), proxy](lhs, rhs)
+        proxy.__sub__ = lambda lhs, rhs: cppyy.gbl.gmpxxyy.sub[proxy, type(rhs)](lhs, rhs)
+        proxy.__rsub__ = lambda rhs, lhs: cppyy.gbl.gmpxxyy.rsub[type(rhs), proxy](lhs, rhs)
+        proxy.__mul__ = lambda lhs, rhs: cppyy.gbl.gmpxxyy.mul[proxy, type(rhs)](lhs, rhs)
+        proxy.__rmul__ = lambda rhs, lhs: cppyy.gbl.gmpxxyy.rmul[type(rhs), proxy](lhs, rhs)
+        proxy.__truediv__ = lambda lhs, rhs: cppyy.gbl.gmpxxyy.div[proxy, type(rhs)](lhs, rhs)
+        proxy.__rtruediv__ = lambda rhs, lhs: cppyy.gbl.gmpxxyy.rdiv[type(rhs), proxy](lhs, rhs)
         proxy.__neg__ = cppyy.gbl.gmpxxyy.neg[proxy]
 
 cppyy.py.add_pythonization(enable_arithmetic)
@@ -102,17 +106,21 @@ cppyy.py.add_pythonization(enable_arithmetic)
 # We need the GMP headers (with C++) to be around. We could ship them with this
 # Python library but then we would have to hope that the libgmpxx.so is
 # compatible. Most likely it is but it doesn't feel right to me.
-cppyy.include("gmpxx.h")
-cppyy.load_library('gmp')
-cppyy.load_library('gmpxx')
-
-# Load libgmpxx.so and define operators
 cppyy.cppdef("""
+#include <gmpxx.h>
+
+#pragma cling load("gmp")
+#pragma cling load("gmpxx")
+
 namespace gmpxxyy {
-template <typename T> T add(const T& lhs, const T& rhs) { return static_cast<T>(lhs + rhs); }
-template <typename T> T sub(const T& lhs, const T& rhs) { return static_cast<T>(lhs - rhs); }
-template <typename T> T mul(const T& lhs, const T& rhs) { return static_cast<T>(lhs * rhs); }
-template <typename T> T div(const T& lhs, const T& rhs) { return static_cast<T>(lhs / rhs); }
+template <typename T, typename S> T add(const T& lhs, const S& rhs) { return lhs + rhs; }
+template <typename T, typename S> S radd(const T& lhs, const S& rhs) { return lhs + rhs; }
+template <typename T, typename S> T sub(const T& lhs, const S& rhs) { return lhs - rhs; }
+template <typename T, typename S> S rsub(const T& lhs, const S& rhs) { return lhs - rhs; }
+template <typename T, typename S> T mul(const T& lhs, const S& rhs) { return lhs * rhs; }
+template <typename T, typename S> S rmul(const T& lhs, const S& rhs) { return lhs * rhs; }
+template <typename T, typename S> T div(const T& lhs, const S& rhs) { return lhs / rhs; }
+template <typename T, typename S> S rdiv(const T& lhs, const S& rhs) { return lhs / rhs; }
 template <typename T> T neg(const T& lhs) { return static_cast<T>(-lhs); }
 }
 """)
