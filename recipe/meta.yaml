@@ -15,19 +15,17 @@ build:
   string: {{ build_string }}
   # cppyy is not available on Windows yet
   skip: True  # [win]
+  run_exports:
+    - gmpxxyy {{ version }}
 
 requirements:
   build:
     - libtool
     - automake
   host:
+    - python >=3.6
     - gmp
-    # We pin to an explicit version of Python here; since the Python part is
-    # noarch:python, the version does not matter. However, we need the same
-    # version when doing "make install" so that files go into the site-packages
-    # directory that was determined by ./configure.
-    - python 3.7.*
-    # enable test/pyexactreal tests in ./configure
+    # enable pytest in ./configure
     - pytest
     - cppyy
     # enable check-valgrind in ./configure
@@ -37,6 +35,8 @@ requirements:
     - pip
     - ipywidgets
     - sympy
+  run:
+    - cppyy
 
 {%- if build_flavour %}
 features:
