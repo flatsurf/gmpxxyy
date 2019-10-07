@@ -13,9 +13,6 @@ jobs:
       osx_build_flavour:
         CONFIG: osx_build_flavour
         UPLOAD_PACKAGES: True
-      osx_build_flavourstyle:
-        CONFIG: osx_build_flavourstyle
-        UPLOAD_PACKAGES: True
 
   steps:
   # TODO: Fast finish on azure pipelines?
