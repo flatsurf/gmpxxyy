@@ -15,6 +15,10 @@ build:
   string: {{ build_string }}
   # cppyy is not available on Windows yet
   skip: True  # [win]
+{%- if build_flavour %}
+  # only run non-release checks on Linux
+  skip: True  # [osx]
+{% endif %}
   run_exports:
     - gmpxxyy {{ version }}
 
