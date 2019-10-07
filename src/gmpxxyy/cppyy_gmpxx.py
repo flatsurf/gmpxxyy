@@ -106,12 +106,10 @@ cppyy.py.add_pythonization(enable_arithmetic)
 # We need the GMP headers (with C++) to be around. We could ship them with this
 # Python library but then we would have to hope that the libgmpxx.so is
 # compatible. Most likely it is but it doesn't feel right to me.
+cppyy.load_library("gmp")
+cppyy.load_library("gmpxx")
+cppyy.include("gmpxx.h")
 cppyy.cppdef("""
-#include <gmpxx.h>
-
-#pragma cling load("gmp")
-#pragma cling load("gmpxx")
-
 namespace gmpxxyy {
 template <typename T, typename S> T add(const T& lhs, const S& rhs) { return lhs + rhs; }
 template <typename T, typename S> S radd(const T& lhs, const S& rhs) { return lhs + rhs; }
