@@ -44,15 +44,23 @@ requirements:
     - cppyy
     - python
 
+outputs:
+  - name: gmpxxyy
+    requirements:
+      - gmp
+      - cppyy
+      - python
+    script: install.sh
+{%- if not build_flavour %}
+    test:
+      imports:
+        - gmpxxyy
+{% endif %}
+
+
 {%- if build_flavour %}
 features:
   - {{ build_flavour }}
-{% endif %}
-
-{%- if not build_flavour %}
-test:
-  imports:
-    - gmpxxyy
 {% endif %}
 
 about:
