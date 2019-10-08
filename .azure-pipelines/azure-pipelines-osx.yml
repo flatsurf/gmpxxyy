@@ -10,8 +10,14 @@ jobs:
   strategy:
     maxParallel: 8
     matrix:
-      osx_build_flavour:
-        CONFIG: osx_build_flavour
+      osx_build_flavourpython2.7:
+        CONFIG: osx_build_flavourpython2.7
+        UPLOAD_PACKAGES: True
+      osx_build_flavourpython3.6:
+        CONFIG: osx_build_flavourpython3.6
+        UPLOAD_PACKAGES: True
+      osx_build_flavourpython3.7:
+        CONFIG: osx_build_flavourpython3.7
         UPLOAD_PACKAGES: True
 
   steps:

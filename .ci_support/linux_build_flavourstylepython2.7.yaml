@@ -1,0 +1,18 @@
+build_flavour:
+- style
+channel_sources:
+- flatsurf,conda-forge,defaults
+channel_targets:
+- flatsurf main
+docker_image:
+- condaforge/linux-anvil-comp7
+gmp:
+- '6'
+pin_run_as_build:
+  gmp:
+    max_pin: x
+  python:
+    min_pin: x.x
+    max_pin: x.x
+python:
+- '2.7'
