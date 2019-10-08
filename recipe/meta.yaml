@@ -27,7 +27,7 @@ requirements:
   build:
     - libtool
     - automake
-  host:
+  host: &host
     - python
     - gmp
     # enable pytest in ./configure
@@ -40,16 +40,12 @@ requirements:
     - pip
     - ipywidgets
     - sympy
-  run:
+  run: &run
     - cppyy
     - python
 
 outputs:
   - name: gmpxxyy
-    requirements:
-      - gmp
-      - cppyy
-      - python
     script: install.sh
 {%- if not build_flavour %}
     test:
