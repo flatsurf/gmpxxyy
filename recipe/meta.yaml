@@ -15,8 +15,8 @@ build:
   string: {{ build_string }}
   # cppyy is not available on Windows yet
   skip: True  # [win]
-{%- if build_flavour %}
-  # only run non-release checks on Linux
+{%- if build_flavour or python != '3.7' %}
+  # only run non-release checks on Linux/py-3.7
   skip: True  # [osx]
 {% endif %}
   run_exports:
