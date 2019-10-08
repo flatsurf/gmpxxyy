@@ -27,7 +27,7 @@ requirements:
   build:
     - libtool
     - automake
-  host: &host
+  host:
     - python
     - gmp
     # enable pytest in ./configure
@@ -40,7 +40,7 @@ requirements:
     - pip
     - ipywidgets
     - sympy
-  run: &run
+  run:
     - cppyy
     - python
 
