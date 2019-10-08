@@ -27,7 +27,7 @@ requirements:
     - libtool
     - automake
   host:
-    - python >=3.6
+    - python
     - gmp
     # enable pytest in ./configure
     - pytest
@@ -41,6 +41,7 @@ requirements:
     - sympy
   run:
     - cppyy
+    - python
 
 {%- if build_flavour %}
 features:
