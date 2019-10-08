@@ -88,17 +88,42 @@ def enable_arithmetic(proxy, name):
         >>> from gmpxxyy import mpz
         >>> mpz(1) - mpz(3)
         -2
+        >>> 1 + mpz(1)
+        2
+        >>> mpz(1) + 1
+        2
+
+    TESTS:
+
+    Check that we allow operators that do not return a GMP type::
+
+        >>> import cppyy
+        >>> cppyy.cppdef('''
+        ... class X{};
+        ... std::string operator+(const X&, const mpz_class&) { return "plus"; }
+        ... std::string operator+(const mpz_class&, const X&) { return "plus"; }
+        ... ''')
+        True
+        >>> mpz(1) + cppyy.gbl.X()
+        'plus'
+        >>> cppyy.gbl.X() + mpz(1)
+        'plus'
 
     """
     if is_primitive_gmp_type(name):
-        proxy.__add__ = lambda lhs, rhs: cppyy.gbl.gmpxxyy.add[proxy, type(rhs)](lhs, rhs)
-        proxy.__radd__ = lambda rhs, lhs: cppyy.gbl.gmpxxyy.radd[type(rhs), proxy](lhs, rhs)
-        proxy.__sub__ = lambda lhs, rhs: cppyy.gbl.gmpxxyy.sub[proxy, type(rhs)](lhs, rhs)
-        proxy.__rsub__ = lambda rhs, lhs: cppyy.gbl.gmpxxyy.rsub[type(rhs), proxy](lhs, rhs)
-        proxy.__mul__ = lambda lhs, rhs: cppyy.gbl.gmpxxyy.mul[proxy, type(rhs)](lhs, rhs)
-        proxy.__rmul__ = lambda rhs, lhs: cppyy.gbl.gmpxxyy.rmul[type(rhs), proxy](lhs, rhs)
-        proxy.__truediv__ = lambda lhs, rhs: cppyy.gbl.gmpxxyy.div[proxy, type(rhs)](lhs, rhs)
-        proxy.__rtruediv__ = lambda rhs, lhs: cppyy.gbl.gmpxxyy.rdiv[type(rhs), proxy](lhs, rhs)
+        def op(lhs, rhs, impl):
+            try:
+                return impl(lhs, rhs)
+            except TypeError:
+                return NotImplemented
+        proxy.__add__ = lambda lhs, rhs: op(lhs, rhs, cppyy.gbl.gmpxxyy.add[type(lhs), type(rhs)])
+        proxy.__radd__ = lambda rhs, lhs: op(lhs, rhs, cppyy.gbl.gmpxxyy.radd[type(lhs), type(rhs)])
+        proxy.__sub__ = lambda lhs, rhs: op(lhs, rhs, cppyy.gbl.gmpxxyy.sub[type(lhs), type(rhs)])
+        proxy.__rsub__ = lambda rhs, lhs: op(lhs, rhs, cppyy.gbl.gmpxxyy.rsub[type(lhs), type(rhs)])
+        proxy.__mul__ = lambda lhs, rhs: op(lhs, rhs, cppyy.gbl.gmpxxyy.mul[type(lhs), type(rhs)])
+        proxy.__rmul__ = lambda rhs, lhs: op(lhs, rhs, cppyy.gbl.gmpxxyy.rmul[type(lhs), type(rhs)])
+        proxy.__truediv__ = lambda lhs, rhs: op(lhs, rhs, cppyy.gbl.gmpxxyy.truediv[type(lhs), type(rhs)])
+        proxy.__rtruediv__ = lambda rhs, lhs: op(lhs, rhs, cppyy.gbl.gmpxxyy.rtruediv[type(lhs), type(rhs)])
         proxy.__neg__ = cppyy.gbl.gmpxxyy.neg[proxy]
 
 cppyy.py.add_pythonization(enable_arithmetic)
@@ -111,14 +136,24 @@ cppyy.load_library("gmpxx")
 cppyy.include("gmpxx.h")
 cppyy.cppdef("""
 namespace gmpxxyy {
-template <typename T, typename S> T add(const T& lhs, const S& rhs) { return lhs + rhs; }
-template <typename T, typename S> S radd(const T& lhs, const S& rhs) { return lhs + rhs; }
-template <typename T, typename S> T sub(const T& lhs, const S& rhs) { return lhs - rhs; }
-template <typename T, typename S> S rsub(const T& lhs, const S& rhs) { return lhs - rhs; }
-template <typename T, typename S> T mul(const T& lhs, const S& rhs) { return lhs * rhs; }
-template <typename T, typename S> S rmul(const T& lhs, const S& rhs) { return lhs * rhs; }
-template <typename T, typename S> T div(const T& lhs, const S& rhs) { return lhs / rhs; }
-template <typename T, typename S> S rdiv(const T& lhs, const S& rhs) { return lhs / rhs; }
+template <typename T>
+class maybe {
+  template <typename S> static auto cast(const S& s) {
+    if constexpr(std::is_convertible_v<S, T>)
+      return static_cast<T>(s);
+    else
+      return s;
+  }
+};
+
+template <typename T, typename S> auto add(const T& lhs, const S& rhs) { return maybe<T>::cast(lhs + rhs); }
+template <typename T, typename S> auto radd(const T& lhs, const S& rhs) { return maybe<S>::cast(lhs + rhs); }
+template <typename T, typename S> auto sub(const T& lhs, const S& rhs) { return maybe<T>::cast(lhs - rhs); }
+template <typename T, typename S> auto rsub(const T& lhs, const S& rhs) { return maybe<S>::cast(lhs - rhs); }
+template <typename T, typename S> auto mul(const T& lhs, const S& rhs) { return maybe<T>::cast(lhs * rhs); }
+template <typename T, typename S> auto rmul(const T& lhs, const S& rhs) { return maybe<S>::cast(lhs * rhs); }
+template <typename T, typename S> auto truediv(const T& lhs, const S& rhs) { return maybe<T>::cast(lhs / rhs); }
+template <typename T, typename S> auto rtruediv(const T& lhs, const S& rhs) { return maybe<S>::cast(lhs / rhs); }
 template <typename T> T neg(const T& lhs) { return static_cast<T>(-lhs); }
 }
 """)
