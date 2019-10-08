@@ -10,20 +10,12 @@ jobs:
   strategy:
     maxParallel: 8
     matrix:
-      linux_build_flavourpython2.7:
-        CONFIG: linux_build_flavourpython2.7
-        UPLOAD_PACKAGES: True
-        DOCKER_IMAGE: condaforge/linux-anvil-comp7
       linux_build_flavourpython3.6:
         CONFIG: linux_build_flavourpython3.6
         UPLOAD_PACKAGES: True
         DOCKER_IMAGE: condaforge/linux-anvil-comp7
       linux_build_flavourpython3.7:
         CONFIG: linux_build_flavourpython3.7
-        UPLOAD_PACKAGES: True
-        DOCKER_IMAGE: condaforge/linux-anvil-comp7
-      linux_build_flavourstylepython2.7:
-        CONFIG: linux_build_flavourstylepython2.7
         UPLOAD_PACKAGES: True
         DOCKER_IMAGE: condaforge/linux-anvil-comp7
       linux_build_flavourstylepython3.6:
