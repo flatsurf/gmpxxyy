@@ -12,7 +12,7 @@ source:
 
 build:
   number: {{ build_number }}
-  string: {{ build_string }}
+  string: {{ build_string }}_py{{ python }}
   # cppyy is not available on Windows yet
   skip: True  # [win]
   skip: True  # [py<36]
