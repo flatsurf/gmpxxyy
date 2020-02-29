@@ -33,6 +33,7 @@ requirements:
     # enable pytest in ./configure
     - pytest
     - cppyy
+    - cppyythonizations
     # enable check-valgrind in ./configure
     - valgrind >=3.15.0  # [linux]
     # to run optional SageMath tests
@@ -42,6 +43,7 @@ requirements:
     - sympy
   run:
     - cppyy
+    - cppyythonizations
     - python
 
 outputs:

@@ -1,3 +1,18 @@
+r"""
+Pythonizations for GMP types
+
+TESTS:
+
+Operators work between primitive GMP types::
+
+    >>> from gmpxxyy import mpz
+    >>> x = mpz(0)
+    >>> x < x
+    False
+    >>> x < x + 1
+    True
+
+"""
 # ********************************************************************
 #  This file is part of gmpxxyy.
 #
@@ -19,16 +34,19 @@
 
 import cppyy
 
-def is_primitive_gmp_type(name):
+from cppyythonizations.operators.order import enable_total_order
+from cppyythonizations.util import filtered
+
+def is_primitive_gmp_type(proxy, name):
     r"""
     Return whether ``name`` is mpz_class, mpq_class, or mpf_class.
 
     EXAMPLES::
 
         >>> from gmpxxyy.cppyy_gmpxx import is_primitive_gmp_type
-        >>> bool(is_primitive_gmp_type("__gmp_expr<__mpz_struct[1],__mpz_struct[1]>"))
+        >>> bool(is_primitive_gmp_type(None, "__gmp_expr<__mpz_struct[1],__mpz_struct[1]>"))
         True
-        >>> bool(is_primitive_gmp_type("__gmp_expr<__mpz_struct[1],__gmp_binary_expr<__gmp_expr<__mpz_struct[1],__mpz_struct[1]>,__gmp_expr<__mpz_struct[1],__mpz_struct[1]>,__gmp_binary_plus> >"))
+        >>> bool(is_primitive_gmp_type(None, "__gmp_expr<__mpz_struct[1],__gmp_binary_expr<__gmp_expr<__mpz_struct[1],__mpz_struct[1]>,__gmp_expr<__mpz_struct[1],__mpz_struct[1]>,__gmp_binary_plus> >"))
         False
 
     """
@@ -47,11 +65,10 @@ def enable_pretty_print(proxy, name):
         1
 
     """
-    if is_primitive_gmp_type(name):
-        proxy.__str__ = proxy.get_str
-        proxy.__repr__ = proxy.get_str
+    proxy.__str__ = proxy.get_str
+    proxy.__repr__ = proxy.get_str
 
-cppyy.py.add_pythonization(enable_pretty_print)
+cppyy.py.add_pythonization(filtered(is_primitive_gmp_type)(enable_pretty_print))
 
 def enable_pickling(proxy, name):
     r"""
@@ -69,10 +86,9 @@ def enable_pickling(proxy, name):
     def reduce(self):
         return (type(self), (str(self),))
 
-    if is_primitive_gmp_type(name):
-        proxy.__reduce__ = reduce
+    proxy.__reduce__ = reduce
 
-cppyy.py.add_pythonization(enable_pickling)
+cppyy.py.add_pythonization(filtered(is_primitive_gmp_type)(enable_pickling))
 
 def enable_arithmetic(proxy, name):
     r"""
@@ -110,23 +126,22 @@ def enable_arithmetic(proxy, name):
         'plus'
 
     """
-    if is_primitive_gmp_type(name):
-        def op(lhs, rhs, impl):
-            try:
-                return impl(lhs, rhs)
-            except TypeError:
-                return NotImplemented
-        proxy.__add__ = lambda lhs, rhs: op(lhs, rhs, cppyy.gbl.gmpxxyy.add[type(lhs), type(rhs)])
-        proxy.__radd__ = lambda rhs, lhs: op(lhs, rhs, cppyy.gbl.gmpxxyy.radd[type(lhs), type(rhs)])
-        proxy.__sub__ = lambda lhs, rhs: op(lhs, rhs, cppyy.gbl.gmpxxyy.sub[type(lhs), type(rhs)])
-        proxy.__rsub__ = lambda rhs, lhs: op(lhs, rhs, cppyy.gbl.gmpxxyy.rsub[type(lhs), type(rhs)])
-        proxy.__mul__ = lambda lhs, rhs: op(lhs, rhs, cppyy.gbl.gmpxxyy.mul[type(lhs), type(rhs)])
-        proxy.__rmul__ = lambda rhs, lhs: op(lhs, rhs, cppyy.gbl.gmpxxyy.rmul[type(lhs), type(rhs)])
-        proxy.__truediv__ = lambda lhs, rhs: op(lhs, rhs, cppyy.gbl.gmpxxyy.truediv[type(lhs), type(rhs)])
-        proxy.__rtruediv__ = lambda rhs, lhs: op(lhs, rhs, cppyy.gbl.gmpxxyy.rtruediv[type(lhs), type(rhs)])
-        proxy.__neg__ = cppyy.gbl.gmpxxyy.neg[proxy]
+    def op(lhs, rhs, impl):
+        try:
+            return impl(lhs, rhs)
+        except TypeError:
+            return NotImplemented
+    proxy.__add__ = lambda lhs, rhs: op(lhs, rhs, cppyy.gbl.gmpxxyy.add[type(lhs), type(rhs)])
+    proxy.__radd__ = lambda rhs, lhs: op(lhs, rhs, cppyy.gbl.gmpxxyy.radd[type(lhs), type(rhs)])
+    proxy.__sub__ = lambda lhs, rhs: op(lhs, rhs, cppyy.gbl.gmpxxyy.sub[type(lhs), type(rhs)])
+    proxy.__rsub__ = lambda rhs, lhs: op(lhs, rhs, cppyy.gbl.gmpxxyy.rsub[type(lhs), type(rhs)])
+    proxy.__mul__ = lambda lhs, rhs: op(lhs, rhs, cppyy.gbl.gmpxxyy.mul[type(lhs), type(rhs)])
+    proxy.__rmul__ = lambda rhs, lhs: op(lhs, rhs, cppyy.gbl.gmpxxyy.rmul[type(lhs), type(rhs)])
+    proxy.__truediv__ = lambda lhs, rhs: op(lhs, rhs, cppyy.gbl.gmpxxyy.truediv[type(lhs), type(rhs)])
+    proxy.__rtruediv__ = lambda rhs, lhs: op(lhs, rhs, cppyy.gbl.gmpxxyy.rtruediv[type(lhs), type(rhs)])
+    proxy.__neg__ = cppyy.gbl.gmpxxyy.neg[proxy]
 
-cppyy.py.add_pythonization(enable_arithmetic)
+cppyy.py.add_pythonization(filtered(is_primitive_gmp_type)(enable_arithmetic))
 
 # We need the GMP headers (with C++) to be around. We could ship them with this
 # Python library but then we would have to hope that the libgmpxx.so is
@@ -157,6 +172,8 @@ template <typename T, typename S> auto rtruediv(const T& lhs, const S& rhs) { re
 template <typename T> T neg(const T& lhs) { return static_cast<T>(-lhs); }
 }
 """)
+
+cppyy.py.add_pythonization(filtered(is_primitive_gmp_type)(enable_total_order))
 
 mpz = cppyy.gbl.mpz_class
 mpq = cppyy.gbl.mpq_class
