@@ -2,10 +2,9 @@
 {% set version = environ.get('GIT_DESCRIBE_TAG', 'untagged')|string|replace('-','_') %}
 {% set build_number = environ.get('GIT_DESCRIBE_NUMBER', '0') %}
 {% set target = target or 'release' %}
-{% set name = 'gmpxxyy' if target == 'release' else 'gmppxxyy-ci' %}
 
 package:
-  name: {{ name }}
+  name: gmpxxyy
   version: {{ version }}
 
 source:
@@ -53,7 +52,7 @@ requirements:
     - python
 
 outputs:
-  - name:  {{ name }}
+  - name: gmpxxyy
 {%- if target == 'release' %}
     script: install.sh
     test:
