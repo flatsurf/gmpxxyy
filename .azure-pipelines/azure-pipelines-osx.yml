@@ -10,12 +10,18 @@ jobs:
   strategy:
     maxParallel: 8
     matrix:
-      osx_build_flavourpython3.6:
-        CONFIG: osx_build_flavourpython3.6
+      osx_python_36_target_release:
+        CONFIG: osx_python_36_target_release
         UPLOAD_PACKAGES: True
-      osx_build_flavourpython3.7:
-        CONFIG: osx_build_flavourpython3.7
+      osx_python_36_target_test:
+        CONFIG: osx_python_36_target_test
+        UPLOAD_PACKAGES: False
+      osx_python_37_target_release:
+        CONFIG: osx_python_37_target_release
         UPLOAD_PACKAGES: True
+      osx_python_37_target_test:
+        CONFIG: osx_python_37_target_test
+        UPLOAD_PACKAGES: False
 
   steps:
   # TODO: Fast finish on azure pipelines?

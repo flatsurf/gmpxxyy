@@ -1,7 +1,7 @@
 # See https://github.com/conda/conda-build/issues/2666 for the missing tag
 {% set version = environ.get('GIT_DESCRIBE_TAG', 'untagged')|string|replace('-','_') %}
 {% set build_number = environ.get('GIT_DESCRIBE_NUMBER', '0') %}
-{% set build_string = "master_" + ((build_flavour + "_") if build_flavour else "") + build_number %}
+{% set target = target or 'release' %}
 
 package:
   name: gmpxxyy
@@ -12,14 +12,17 @@ source:
 
 build:
   number: {{ build_number }}
-  string: {{ build_string }}_py{{ python }}
+  string: {{ target }}_py{{ python }}_{{ build_number }}
   # cppyy is not available on Windows yet
   skip: True  # [win]
+  # we do not support old versions of Python
   skip: True  # [py<36]
-{%- if build_flavour %}
-  # only run non-release checks on Linux/3.7 (unfortunately, the py selector is ignored by conda-smithy.)
-  skip: True  # [not linux or py<37]
-{% endif %}
+{%- if target not in ["test", "release"] %}
+  # ignore Python version where it does not matter (conda-smithy still renders these but conda-build stops immediately)
+  skip: True  # [py != 37]
+  # ignore OS where it does not matter (conda-smithy still renders these but conda-build stops immediately)
+  skip: True  # [not linux]
+{%- endif %}
   run_exports:
     - gmpxxyy {{ version }}
 
@@ -29,10 +32,12 @@ requirements:
     - automake
   host:
     - python
-    - gmp
+    - setuptools
+{%- if target in ["test"] %}
     # enable pytest in ./configure
     - pytest
     - cppyy
+    - cppyythonizations
     # enable check-valgrind in ./configure
     - valgrind >=3.15.0  # [linux]
     # to run optional SageMath tests
@@ -40,24 +45,21 @@ requirements:
     - pip
     - ipywidgets
     - sympy
+{%- endif %}
   run:
     - cppyy
+    - cppyythonizations
     - python
 
 outputs:
   - name: gmpxxyy
+{%- if target == 'release' %}
     script: install.sh
-{%- if not build_flavour %}
     test:
       imports:
         - gmpxxyy
 {% endif %}
 
-
-{%- if build_flavour %}
-features:
-  - {{ build_flavour }}
-{% endif %}
 
 about:
   home: https://github.com/flatsurf/gmpxxyy
