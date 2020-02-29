@@ -33,6 +33,7 @@ requirements:
     - automake
   host:
     - python
+    - setuptools
 {%- if target in ["test"] %}
     # enable pytest in ./configure
     - pytest
