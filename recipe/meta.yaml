@@ -18,6 +18,12 @@ build:
   skip: True  # [win]
   # we do not support old versions of Python
   skip: True  # [py<36]
+{%- if target not in ["test", "release"] %}
+  # ignore Python version where it does not matter (conda-smithy still renders these but conda-build stops immediately)
+  skip: True  # [py != 37]
+  # ignore OS where it does not matter (conda-smithy still renders these but conda-build stops immediately)
+  skip: True  # [not linux]
+{%- endif %}
   run_exports:
     - gmpxxyy {{ version }}
 
