@@ -1,7 +1,8 @@
-# See https://github.com/conda/conda-build/issues/2666 for the missing tag
-{% set version = environ.get('GIT_DESCRIBE_TAG', 'untagged')|string|replace('-','_') %}
-{% set build_number = environ.get('GIT_DESCRIBE_NUMBER', '0') %}
-{% set target = target or 'release' %}
+{% set version = environ.get('GIT_DESCRIBE_TAG', 'untagged')| string | replace('-','_') %}
+{% set build_number = environ.get('GIT_DESCRIBE_NUMBER') %}
+{% set action = action or 'release' %}
+{% set test_requirements = action in ["test", "coverage", "benchmark"] %}
+{% set py = _python | replace('*', '') | replace(' ', '') | replace('.', '') %}
 
 package:
   name: gmpxxyy
@@ -12,17 +13,11 @@ source:
 
 build:
   number: {{ build_number }}
-  string: {{ target }}_py{{ python }}_{{ build_number }}
+  string: py{{ py }}_{{ build_number }}
   # cppyy is not available on Windows yet
   skip: True  # [win]
-  # we do not support old versions of Python
-  skip: True  # [py<36]
-{%- if target not in ["test", "release"] %}
-  # ignore Python version where it does not matter (conda-smithy still renders these but conda-build stops immediately)
-  skip: True  # [py != 37]
-  # ignore OS where it does not matter (conda-smithy still renders these but conda-build stops immediately)
-  skip: True  # [not linux]
-{%- endif %}
+  # cppyy on macOS does not support C++17 without explicit switches currently; https://github.com/conda-forge/cppyy-feedstock/issues/21
+  skip: True  # [osx]
   run_exports:
     - gmpxxyy {{ version }}
 
@@ -31,9 +26,10 @@ requirements:
     - libtool
     - automake
   host:
-    - python
+    - python {{ _python }}
     - setuptools
-{%- if target in ["test"] %}
+    - gmp
+{%- if test_requirements %}
     # enable pytest in ./configure
     - pytest
     - cppyy
@@ -49,24 +45,24 @@ requirements:
   run:
     - cppyy
     - cppyythonizations
-    - python
+    - python {{ _python }}
 
-outputs:
-  - name: gmpxxyy
-{%- if target == 'release' %}
-    script: install.sh
-    test:
-      imports:
-        - gmpxxyy
-{% endif %}
+{%- if action == "release" %}
+test:
+  imports:
+    - gmpxxyy
+{%- endif %}
 
 
 about:
   home: https://github.com/flatsurf/gmpxxyy
-  license: GPL2
+  license: GPL-3.0-or-later
   license_file: COPYING
   summary: A cppyy wrapper for GMP
 
 extra:
   recipe-maintainers:
     - saraedum
+  variables:
+    action: {{ action }}
+    job: {{ job }}

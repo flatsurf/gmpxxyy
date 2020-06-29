@@ -1,14 +1,21 @@
+_python:
+- 3.7.* *_cpython
+action:
+- test
 channel_sources:
 - flatsurf,conda-forge,defaults
 channel_targets:
 - flatsurf main
 docker_image:
 - condaforge/linux-anvil-comp7
+gmp:
+- '6'
+job:
+- test37
 pin_run_as_build:
-  python:
-    min_pin: x.x
-    max_pin: x.x
-python:
-- '3.7'
-target:
-- test
+  gmp:
+    max_pin: x
+zip_keys:
+- - job
+  - action
+  - _python
