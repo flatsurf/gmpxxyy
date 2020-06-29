@@ -28,6 +28,7 @@ requirements:
   host:
     - python {{ _python }}
     - setuptools
+    - gmp
 {%- if test_requirements %}
     # enable pytest in ./configure
     - pytest
