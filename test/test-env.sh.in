@@ -1,2 +1,2 @@
 #!/bin/sh
-export PYTHONPATH="@srcdir@/../src/:@pythondir@"
+export PYTHONPATH="@abs_srcdir@/../src/:@pythondir@"

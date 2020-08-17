@@ -35,6 +35,7 @@ Operators work between primitive GMP types::
 import cppyy
 
 from cppyythonizations.operators.order import enable_total_order
+from cppyythonizations.operators.arithmetic import enable_arithmetic, enable_neg
 from cppyythonizations.util import filtered
 
 def is_primitive_gmp_type(proxy, name):
@@ -90,7 +91,7 @@ def enable_pickling(proxy, name):
 
 cppyy.py.add_pythonization(filtered(is_primitive_gmp_type)(enable_pickling))
 
-def enable_arithmetic(proxy, name):
+def enable_gmp_arithmetic(proxy, name):
     r"""
     The C++ operators implemented by GMP do not return values but expressions
     that are then optimized away by the compiler.
@@ -126,22 +127,12 @@ def enable_arithmetic(proxy, name):
         'plus'
 
     """
-    def op(lhs, rhs, impl):
-        try:
-            return impl(lhs, rhs)
-        except TypeError:
-            return NotImplemented
-    proxy.__add__ = lambda lhs, rhs: op(lhs, rhs, cppyy.gbl.gmpxxyy.add[type(lhs), type(rhs)])
-    proxy.__radd__ = lambda rhs, lhs: op(lhs, rhs, cppyy.gbl.gmpxxyy.radd[type(lhs), type(rhs)])
-    proxy.__sub__ = lambda lhs, rhs: op(lhs, rhs, cppyy.gbl.gmpxxyy.sub[type(lhs), type(rhs)])
-    proxy.__rsub__ = lambda rhs, lhs: op(lhs, rhs, cppyy.gbl.gmpxxyy.rsub[type(lhs), type(rhs)])
-    proxy.__mul__ = lambda lhs, rhs: op(lhs, rhs, cppyy.gbl.gmpxxyy.mul[type(lhs), type(rhs)])
-    proxy.__rmul__ = lambda rhs, lhs: op(lhs, rhs, cppyy.gbl.gmpxxyy.rmul[type(lhs), type(rhs)])
-    proxy.__truediv__ = lambda lhs, rhs: op(lhs, rhs, cppyy.gbl.gmpxxyy.truediv[type(lhs), type(rhs)])
-    proxy.__rtruediv__ = lambda rhs, lhs: op(lhs, rhs, cppyy.gbl.gmpxxyy.rtruediv[type(lhs), type(rhs)])
-    proxy.__neg__ = cppyy.gbl.gmpxxyy.neg[proxy]
+    unwrap = lambda value: cppyy.gbl.gmpxxyy.maybe[proxy.__cpp_name__].cast(value)
 
-cppyy.py.add_pythonization(filtered(is_primitive_gmp_type)(enable_arithmetic))
+    enable_arithmetic(proxy, name, unwrap)
+    enable_neg(proxy, name, unwrap)
+
+cppyy.py.add_pythonization(filtered(is_primitive_gmp_type)(enable_gmp_arithmetic))
 
 def enable_float(proxy, name):
     r"""
@@ -168,24 +159,15 @@ cppyy.include("gmpxx.h")
 cppyy.cppdef("""
 namespace gmpxxyy {
 template <typename T>
-class maybe {
-  template <typename S> static auto cast(const S& s) {
+struct maybe {
+  template <typename S>
+  static auto cast(const S& s) {
     if constexpr(std::is_convertible_v<S, T>)
       return static_cast<T>(s);
     else
       return s;
   }
 };
-
-template <typename T, typename S> auto add(const T& lhs, const S& rhs) { return maybe<T>::cast(lhs + rhs); }
-template <typename T, typename S> auto radd(const T& lhs, const S& rhs) { return maybe<S>::cast(lhs + rhs); }
-template <typename T, typename S> auto sub(const T& lhs, const S& rhs) { return maybe<T>::cast(lhs - rhs); }
-template <typename T, typename S> auto rsub(const T& lhs, const S& rhs) { return maybe<S>::cast(lhs - rhs); }
-template <typename T, typename S> auto mul(const T& lhs, const S& rhs) { return maybe<T>::cast(lhs * rhs); }
-template <typename T, typename S> auto rmul(const T& lhs, const S& rhs) { return maybe<S>::cast(lhs * rhs); }
-template <typename T, typename S> auto truediv(const T& lhs, const S& rhs) { return maybe<T>::cast(lhs / rhs); }
-template <typename T, typename S> auto rtruediv(const T& lhs, const S& rhs) { return maybe<S>::cast(lhs / rhs); }
-template <typename T> T neg(const T& lhs) { return static_cast<T>(-lhs); }
 }
 """)
 
