@@ -143,6 +143,22 @@ def enable_arithmetic(proxy, name):
 
 cppyy.py.add_pythonization(filtered(is_primitive_gmp_type)(enable_arithmetic))
 
+def enable_float(proxy, name):
+    r"""
+    The C++ types implemented by GMP do not expose cast operators to double,
+    therefore we need to manually expose that operator here.
+
+    EXAMPLES::
+
+        >>> from gmpxxyy import mpq
+        >>> float(mpq(1, 3))
+        0.3333333333333333
+
+    """
+    proxy.__float__ = lambda self: self.get_d()
+
+cppyy.py.add_pythonization(filtered(is_primitive_gmp_type)(enable_float))
+
 # We need the GMP headers (with C++) to be around. We could ship them with this
 # Python library but then we would have to hope that the libgmpxx.so is
 # compatible. Most likely it is but it doesn't feel right to me.
