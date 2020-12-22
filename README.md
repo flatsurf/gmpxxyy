@@ -1,7 +1,4 @@
-[![Linux](https://dev.azure.com/flatsurf/conda/_apis/build/status/flatsurf.gmpxxyy?branchName=master&jobName=linux&configuration=linux%20linux_build_flavour)](https://dev.azure.com/flatsurf/conda/_build/latest?definitionId=&branchName=master)
-[![macOS](https://dev.azure.com/flatsurf/conda/_apis/build/status/flatsurf.gmpxxyy?branchName=master&jobName=osx&configuration=osx%20osx_build_flavour)](https://dev.azure.com/flatsurf/conda/_build/latest?definitionId=&branchName=master)
-![Windows disabled](https://img.shields.io/badge/Windows-disabled-lightgrey.svg)
-![ppc64le disabled](https://img.shields.io/badge/ppc64le-disabled-lightgrey.svg)
+![Test](https://github.com/flatsurf/gmpxxyy/workflows/Test/badge.svg)
 
 # Python Wrapper for GMP
 
@@ -56,7 +53,7 @@ conda activate gmpxxyy
 
 You can try out this project in a very limited environment online by clicking this link:
 
-* **gmpxxyy** [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/flatsurf/exact-real/master?filepath=binder%2FSample.gmpxxyy.ipynb)
+* **gmpxxyy** [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/flatsurf/exact-real/master?filepath=doc%2Fbinder%2FSample.gmpxxyy.ipynb)
 
 ## Build from the Source Code Repository
 

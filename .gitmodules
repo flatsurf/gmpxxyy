@@ -1,3 +1,0 @@
-[submodule "recipe/snippets"]
-	path = recipe/snippets
-	url = https://github.com/flatsurf/conda-recipes
