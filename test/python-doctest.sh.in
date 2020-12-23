@@ -22,5 +22,4 @@
 
 set -ex
 
-TARGETS=`grep -l '>>>' @srcdir@/../src/gmpxxyy/*.py`
-pytest --doctest-modules $TARGETS
+pytest --doctest-modules @srcdir@/../src/gmpxxyy/
