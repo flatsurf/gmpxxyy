@@ -1,19 +1,15 @@
-{% set version = environ.get('GIT_DESCRIBE_TAG', 'untagged')| string | replace('-','_') %}
-{% set build_number = environ.get('GIT_DESCRIBE_NUMBER') %}
-{% set action = action or 'release' %}
-{% set test_requirements = action in ["test", "coverage", "benchmark"] %}
-{% set py = _python | replace('*', '') | replace(' ', '') | replace('.', '') %}
+{% set version = '0.0.1' %}
+{% set build_number = '0' %}
 
 package:
   name: gmpxxyy
   version: {{ version }}
 
 source:
-  git_url: {{ environ.get('FEEDSTOCK_ROOT', '..') }}
+  path: ../
 
 build:
   number: {{ build_number }}
-  string: py{{ py }}_{{ build_number }}
   # cppyy is not available on Windows yet
   skip: True  # [win]
   # cppyy on macOS does not support C++17 without explicit switches currently; https://github.com/conda-forge/cppyy-feedstock/issues/21
@@ -26,43 +22,20 @@ requirements:
     - libtool
     - automake
   host:
-    - python {{ _python }}
+    - python
     - setuptools
-    - gmp
-{%- if test_requirements %}
-    # enable pytest in ./configure
-    - pytest
-    - cppyy
-    - cppyythonizations
-    # enable check-valgrind in ./configure
-    - valgrind >=3.15.0  # [linux]
-    # to run optional SageMath tests
-    - sagelib
-    - pip
-    - ipywidgets
-    - sympy
-{%- endif %}
+    - gmp {{ gmp }}
   run:
     - cppyy
     - cppyythonizations
-    - python {{ _python }}
+    - python
 
-{%- if action == "release" %}
 test:
   imports:
     - gmpxxyy
-{%- endif %}
-
 
 about:
   home: https://github.com/flatsurf/gmpxxyy
   license: GPL-3.0-or-later
   license_file: COPYING
   summary: A cppyy wrapper for GMP
-
-extra:
-  recipe-maintainers:
-    - saraedum
-  variables:
-    action: {{ action }}
-    job: {{ job }}

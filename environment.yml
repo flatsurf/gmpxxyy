@@ -1,0 +1,21 @@
+# This file lists the dependencies needed to build and test all of gmpxxyy.
+# Create a conda environment with these dependencies preinstalled with:
+# conda env create -f environment.yml
+# conda env update -n gmpxxyy-build -f environment.yml
+name: gmpxxyy-build
+channels:
+  - flatsurf
+  - conda-forge
+  - defaults
+dependencies:
+  - automake
+  - cppyy
+  - cppyythonizations
+  - ipywidgets
+  - libtool
+  - make
+  - pytest
+  - python
+  - sagelib
+  - setuptools
+  - sympy
