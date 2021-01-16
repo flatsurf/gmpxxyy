@@ -37,7 +37,7 @@ class ConversionZZMpz(Morphism):
         Morphism.__init__(self, Hom(mpz, ZZ, ZZ.category(), check=False))
 
     def _call_(self, x):
-        return ZZ(x.get_str())
+        return ZZ(str(x.get_str()))
 
 mpz.is_exact = lambda: True
 ZZ.register_conversion(ConversionZZMpz())
@@ -57,7 +57,7 @@ class ConversionQQMpq(Morphism):
         Morphism.__init__(self, Hom(mpq, QQ, QQ.category(), check=False))
     
     def _call_(self, x):
-        return QQ(x.get_str())
+        return QQ(str(x.get_str()))
 
 mpq.is_exact = lambda: True
 QQ.register_conversion(ConversionQQMpq())
