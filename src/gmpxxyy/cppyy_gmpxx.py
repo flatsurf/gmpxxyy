@@ -66,8 +66,8 @@ def enable_pretty_print(proxy, name):
         1
 
     """
-    proxy.__str__ = proxy.get_str
-    proxy.__repr__ = proxy.get_str
+    proxy.__str__ = lambda self: str(self.get_str())
+    proxy.__repr__ = lambda self: str(self.get_str())
 
 cppyy.py.add_pythonization(filtered(is_primitive_gmp_type)(enable_pretty_print))
 
@@ -122,9 +122,9 @@ def enable_gmp_arithmetic(proxy, name):
         ... ''')
         True
         >>> mpz(1) + cppyy.gbl.X()
-        'plus'
+        b'plus'
         >>> cppyy.gbl.X() + mpz(1)
-        'plus'
+        b'plus'
 
     """
     unwrap = lambda value: cppyy.gbl.gmpxxyy.maybe[proxy.__cpp_name__].cast(value)
