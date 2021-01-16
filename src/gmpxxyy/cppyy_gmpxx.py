@@ -66,8 +66,8 @@ def enable_pretty_print(proxy, name):
         1
 
     """
-    proxy.__str__ = proxy.get_str
-    proxy.__repr__ = proxy.get_str
+    proxy.__str__ = lambda self: str(self.get_str())
+    proxy.__repr__ = lambda self: str(self.get_str())
 
 cppyy.py.add_pythonization(filtered(is_primitive_gmp_type)(enable_pretty_print))
 
