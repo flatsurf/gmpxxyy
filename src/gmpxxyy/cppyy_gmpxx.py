@@ -122,9 +122,9 @@ def enable_gmp_arithmetic(proxy, name):
         ... ''')
         True
         >>> mpz(1) + cppyy.gbl.X()
-        'plus'
+        b'plus'
         >>> cppyy.gbl.X() + mpz(1)
-        'plus'
+        b'plus'
 
     """
     unwrap = lambda value: cppyy.gbl.gmpxxyy.maybe[proxy.__cpp_name__].cast(value)
