@@ -1,5 +1,5 @@
 {% set version = '1.0.1' %}
-{% set build_number = '0' %}
+{% set build_number = '1' %}
 
 package:
   name: gmpxxyy
@@ -14,8 +14,6 @@ build:
   skip: True  # [win]
   # cppyy on macOS does not support C++17 without explicit switches currently; https://github.com/conda-forge/cppyy-feedstock/issues/21
   skip: True  # [osx]
-  run_exports:
-    - gmpxxyy {{ version }}
 
 requirements:
   build:
