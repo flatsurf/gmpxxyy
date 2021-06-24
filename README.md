@@ -26,34 +26,22 @@ This wrapper was born out of the necessity for a wrapper for the C++ interface o
 
 As another downside we have [cppyy](https://cppyy.readthedocs.io/) as a dependency which at the time of this writing is a very heavy one indeed.
 
-## Current Release Info
-
-We build and release this package with every push to the master branch. These releases are considered unstable and highly
-experimental. There are no stable releases yet.
-
-This repository contains:
-
-* **gmpxxyy** a Python wrapper for **libgmpxx**
-
-| Name | Downloads | Version | Platforms |
-| --- | --- | --- | --- |
-| [![Nightly Build](https://img.shields.io/badge/recipe-gmpxxyy-green.svg)](https://anaconda.org/flatsurf/gmpxxyy) | [![Conda Downloads](https://img.shields.io/conda/dn/flatsurf/gmpxxyy.svg)](https://anaconda.org/flatsurf/gmpxxyy) | [![Conda Version](https://img.shields.io/conda/vn/flatsurf/gmpxxyy.svg)](https://anaconda.org/flatsurf/gmpxxyy) | [![Conda Platforms](https://img.shields.io/conda/pn/flatsurf/gmpxxyy.svg)](https://anaconda.org/flatsurf/gmpxxyy) |
-
 ## Install with Conda
 
-You can install this package with conda. Download and install [Miniconda](https://conda.io/miniconda.html), then run
+You can install this package with conda. Download and install [Mambaforge](https://github.com/conda-forge/miniforge#mambaforge), then run
 
 ```
-conda config --add channels conda-forge
-conda create -n gmpxxyy -c flatsurf gmpxxyy
+mamba create -n gmpxxyy gmpxxyy
 conda activate gmpxxyy
 ```
+
+This installs the latest released version from [conda-forge](https://github.com/conda-forge/gmpxxyy-feedstock). Alternatively, you can also install the latest version from the `flatsurf` channel by adding `-c flatsurf` to the first command.
 
 ## Run with binder in the Cloud
 
 You can try out this project in a very limited environment online by clicking this link:
 
-* **gmpxxyy** [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/flatsurf/exact-real/master?filepath=doc%2Fbinder%2FSample.gmpxxyy.ipynb)
+* **gmpxxyy** [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/flatsurf/gmpxxyy/master?filepath=doc%2Fbinder%2FSample.gmpxxyy.ipynb)
 
 ## Build from the Source Code Repository
 
