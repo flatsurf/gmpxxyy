@@ -28,8 +28,8 @@ class ConversionZZMpz(Morphism):
 
     EXAMPLES::
 
-        sage: from gmpxxyy import mpz  # random output due to deprecation warnings
-        sage: ZZ(mpz(1))
+        >>> from gmpxxyy import mpz  # random output due to deprecation warnings
+        >>> ZZ(mpz(ZZ(1)))
         1
 
     """
@@ -48,8 +48,8 @@ class ConversionQQMpq(Morphism):
 
     EXAMPLES::
 
-        sage: from gmpxxyy import mpq
-        sage: QQ(mpq(1, 2))
+        >>> from gmpxxyy import mpq
+        >>> QQ(mpq(1, 2))
         1/2
 
     """

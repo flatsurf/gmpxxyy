@@ -37,17 +37,13 @@ conda activate gmpxxyy
 
 ## Build from the Source Code Repository
 
-We are following an autoconf setup, i.e., you can install `src/gmpxxyy` with
-the following:
+You recommend to use [pixi](https://pixi.sh) to work on this project. You can
+build gmpxxyy and run its test with:
 
 ```
 git clone --recurse-submodules https://github.com/flatsurf/gmpxxyy.git
 cd gmpxxyy
-./bootstrap
-./configure
-make
-make check # to run our test suite
-make install # to install into /usr/local
+pixi run -e dev test
 ```
 
 ## Maintainers

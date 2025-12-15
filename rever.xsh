@@ -1,7 +1,7 @@
 ######################################################################
 #  This file is part of gmpxxyy.
 #
-#        Copyright (C) 2020 Julian Rüth
+#        Copyright (C) 2020-2025 Julian Rüth
 #
 #  gmpxxyy is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU Lesser General Public License as published by
@@ -24,25 +24,25 @@ try:
 except KeyboardInterrupt:
   sys.exit(1)
 
-sys.path.insert(0, 'tools/rever')
+from rever.activities.command import command
 
-import dist
+command('build', 'python -m build')
+command('twine', 'twine upload dist/*')
 
 $PROJECT = 'gmpxxyy'
 
 $ACTIVITIES = [
     'version_bump',
     'changelog',
-    'dist',
+    'build',
     'tag',
+    'twine'
     'push_tag',
     'ghrelease',
 ]
 
 $VERSION_BUMP_PATTERNS = [
-    ('configure.ac', r'AC_INIT', r'AC_INIT([gmpxxyy], [$VERSION], [julian.rueth@fsfe.org])'),
-    ('recipe/meta.yaml', r"\{% set version =", r"{% set version = '$VERSION' %}"),
-    ('recipe/meta.yaml', r"\{% set build_number =", r"{% set build_number = '0' %}"),
+    ('pyproject.toml', r"version =", 'version = "$VERSION"'),
 ]
 
 $CHANGELOG_FILENAME = 'ChangeLog'

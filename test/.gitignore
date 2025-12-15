@@ -1,7 +1,0 @@
-# test artifacts
-*.trs
-
-# generated files
-/test-env.sh
-/python-doctest.sh
-/sage-doctest.sh

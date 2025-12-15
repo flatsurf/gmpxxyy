@@ -1,0 +1,72 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gmpxxyy"
+authors = [
+  {name = "Julian Rüth", email = "julian.rueth@fsfe.org"},
+]
+description = "Another Python wrapper for GMP"
+readme = "README.md"
+classifiers = [
+  "License :: OSI Approved :: GPL-3.0-or-later"
+]
+version = "1.0.1"
+dependencies = ["cppyy"]
+
+[project.urls]
+Homepage = "https://github.com/flatsurf/gmpxxyy"
+Repository = "https://github.com/flatsurf/gmpxxyy.git"
+Issues = "https://github.com/flatsurf/gmpxxyy/issues"
+Changelog = "https://github.com/flatsurf/gmpxxyy/blob/master/ChangeLog"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pixi.workspace]
+channels = ["conda-forge"]
+platforms = ["linux-64", "osx-64", "osx-arm64"]
+
+[tool.pixi.environments]
+python-310 = ["python-310"]
+python-311 = ["python-311"]
+python-312 = ["python-312"]
+dev = ["dev", "python-312"]
+
+[tool.pixi.dependencies]
+cppyy = "*"
+cppyythonizations = "*"
+gmp = "*"
+pytest = "*"
+python = "*"
+sagelib = "*"
+setuptools = "*"
+
+[pypi-dependencies]
+gmpxxyy = { path = "src", editable = true }
+
+[tool.pixi.feature.dev.dependencies]
+rever = "*"
+
+[tool.pixi.feature.dev.target.linux.dependencies]
+# A recent functioning valgrind is only available on conda-forge linux builds.
+valgrind = "*"
+
+[tool.pixi.feature.dev.target.linux.pypi-dependencies]
+pytest-valgrind = "*"
+
+[tool.pixi.feature.python-310.dependencies]
+python = "3.10.*"
+
+[tool.pixi.feature.python-311.dependencies]
+python = "3.11.*"
+
+[tool.pixi.feature.python-312.dependencies]
+python = "3.12.*"
+
+[tool.pixi.tasks]
+test = "pytest --doctest-modules -vv"
+
+[tool.pixi.feature.dev.tasks]
+test-valgrind = "PYTHONMALLOC=malloc valgrind --show-leak-kinds=definite --log-file=/tmp/valgrind-output python -m pytest -vv --doctest-modules --valgrind --valgrind-log=/tmp/valgrind-output"
